@@ -21,7 +21,6 @@ import {
   BookOpen, RotateCcw, X
 } from 'lucide-react'
 
-// ─── Types ──────────────────────────────────────────────
 
 interface SubRowThing {
   entryId: string
@@ -31,7 +30,7 @@ interface SubRowThing {
   tab: 'completed' | 'ongoing' | 'future'
 }
 
-// ─── Constants ──────────────────────────────────────────
+
 
 const gradeMainList = ["S", "A", "B", "C", "D", "E"]
 const zeroGradeList = ["U", "WQ", "WA"]
@@ -85,7 +84,6 @@ const subStatusLabel = (grade: string) => {
   return null
 }
 
-// ─── AnimatedNumber ─────────────────────────────────────
 
 function NumWiggle({ value, decimals = 2 }: { value: number; decimals?: number }) {
   const mv = useMotionValue(0)
@@ -99,7 +97,6 @@ function NumWiggle({ value, decimals = 2 }: { value: number; decimals?: number }
   return <span>{d}</span>
 }
 
-// ─── CGPARing ───────────────────────────────────────────
 
 function RingMeter({ value, size = 50 }: { value: number; size?: number }) {
   const r = (size - 10) / 2
@@ -123,7 +120,7 @@ function RingMeter({ value, size = 50 }: { value: number; size?: number }) {
   )
 }
 
-// ─── GradePills ─────────────────────────────────────────
+
 
 function GradeBtns({ selected, onChange }: { selected: string; onChange: (g: string) => void }) {
   const inactive = "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60"
@@ -158,7 +155,7 @@ function GradeBtns({ selected, onChange }: { selected: string; onChange: (g: str
   )
 }
 
-// ─── TermPicker ─────────────────────────────────────────
+
 
 function TermPick({ term, onChange }: { term: TermBits; onChange: (t: TermBits) => void }) {
   return (
@@ -183,7 +180,6 @@ function TermPick({ term, onChange }: { term: TermBits; onChange: (t: TermBits) 
   )
 }
 
-// ─── Main Component ─────────────────────────────────────
 
 export default function CalcPage() {
   const [levelFilter, setLevelFilter] = useState<CourseLvl | "ALL">("ALL")
@@ -300,7 +296,7 @@ export default function CalcPage() {
     { key: 'future' as const, label: 'Future', count: future.length },
   ]
 
-  // ─── RENDER ───────────────────────────────────────────
+
 
   return (
     <div className="max-w-5xl mx-auto px-4  md:py-10">
@@ -319,14 +315,14 @@ export default function CalcPage() {
    
       </motion.div>
 
-      {/* ─── Top Selectors Row ──────────────────────────── */}
+      {/*Top Selectors Row */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
         className="grid  grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-5 rounded-xl bg-card/60 backdrop-blur-sm border border-border/40"
       >
-        {/* Degree Type */}
+
         <div>
           <label className="text-[10px] font-semibold uppercase tracking-widest text-emerald-400 mb-1.5 block">
             Degree Type
@@ -337,7 +333,7 @@ export default function CalcPage() {
           </div>
         </div>
 
-        {/* Course Level */}
+
         <div>
           <label className="text-[10px] font-semibold uppercase tracking-widest text-emerald-400 mb-1.5 block">
             Course Level
@@ -379,7 +375,6 @@ export default function CalcPage() {
           </Popover>
         </div>
 
-        {/* Subject Picker */}
         <div>
           <label className="text-[10px] font-semibold uppercase tracking-widest text-emerald-400 mb-1.5 block">
             Subject
@@ -425,14 +420,14 @@ export default function CalcPage() {
         </div>
       </motion.div>
 
-      {/* ─── Main 2-Column Layout ───────────────────────── */}
+      {/* Main Left Column */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] h-full gap-6 items-stretch">
 
-        {/* ── Left: Subject List ──────────────────────────── */}
+       
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className='space-y-4'>
           <Card className="bg-card/60 backdrop-blur-sm border-border/40 h-full">
             <CardContent className="p-5">
-              {/* Card Header */}
+            
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="size-5 text-primary" />
@@ -446,7 +441,7 @@ export default function CalcPage() {
                 )}
               </div>
 
-              {/* Tabs */}
+          
               <div className="flex gap-1 mb-4 p-1 bg-muted/20 rounded-lg">
                 {tabs.map(t => (
                   <button
@@ -464,13 +459,12 @@ export default function CalcPage() {
                 ))}
               </div>
 
-              {/* Default term row */}
               <div className="flex items-center justify-between mb-4 text-xs text-muted-foreground">
                 <span>Default term for new subjects:</span>
                 <TermPick term={defaultTerm} onChange={setDefaultTerm} />
               </div>
 
-              {/* Subject entries */}
+            
               {tabEntries.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-muted-foreground/40">
                   <BookOpen className="size-10 mb-3" />
@@ -481,7 +475,7 @@ export default function CalcPage() {
                 <div className="space-y-2">
                   {groups.map(group => (
                     <div key={termKeyish(group.term)}>
-                      {/* Term divider */}
+                    
                       <div className="flex items-center gap-2 py-2">
                         <div className="h-px flex-1 bg-border/30" />
                         <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">
@@ -506,7 +500,7 @@ export default function CalcPage() {
                                 noCgpaOnes.includes(entry.grade) ? 'opacity-50' : ''
                               }`}
                             >
-                              {/* Row 1: name + meta */}
+                            
                               <div className="flex items-center gap-2 mb-2">
                                 <span className={`text-[10px] font-bold shrink-0 ${levelBadgeBits[entry.subject.level].color}`}>
                                   {levelBadgeBits[entry.subject.level].label}
@@ -523,7 +517,7 @@ export default function CalcPage() {
                                 </button>
                               </div>
 
-                              {/* Row 2: term + grade pills */}
+                            
                               <div className="flex items-center justify-between gap-2 flex-wrap">
                                 <TermPick term={entry.term} onChange={t => updateTerm(entry.entryId, t)} />
                                 <div className="flex items-center gap-1.5">
@@ -549,14 +543,14 @@ export default function CalcPage() {
           </Card>
         </motion.div>
 
-        {/* ── Right: Results Sidebar ──────────────────────── */}
+        {/* main right */}
         <motion.div
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
           className="space-y-4"
         >
-          {/* ─ Main CGPA Card ─ */}
+         
           <Card className="border border-border/40 bg-card/60 backdrop-blur-sm h-full">
             <CardContent className="p-5">
               <div className="flex items-start justify-between">
@@ -614,7 +608,7 @@ export default function CalcPage() {
         </motion.div>
       </div>
 
-      {/* ─── Bottom Row: Preview / Target / Required ───── */}
+      {/* bottom row */}
       {showBottomRow && (
         <div className="grid grid-cols-1 mt-5 lg:grid-cols-[1fr_340px] gap-6 items-stretch">
           <motion.div
@@ -623,7 +617,7 @@ export default function CalcPage() {
             transition={{ delay: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
-            {/* ─ CGPA Preview ─ */}
+           
             {showPredicted && (
               <Card className="border-blue-500/20 bg-card/60 backdrop-blur-sm">
                 <CardContent className="p-4">
@@ -649,7 +643,7 @@ export default function CalcPage() {
               </Card>
             )}
 
-            {/* ─ Target CGPA ─ */}
+          
             {showTarget && (
               <Card className="bg-card/60 backdrop-blur-sm border-border/40">
                 <CardContent className="p-4">
@@ -682,7 +676,7 @@ export default function CalcPage() {
             )}
           </motion.div>
 
-          {/* ─ Required Grades ─ */}
+     
           {showRequired && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}

@@ -16,7 +16,6 @@ export const gradePtsThing: Record<string, number> = {
 export const noCgpaOnes = ["I", "I_OP", "I_BOTH"]
 export const failishList = ["U", "WA", "WQ"]
 
-// Types
 
 export type DegreeBucket = "BS_DS" | "BS_ES"
 export type CourseLvl = "FOUNDATION" | "DIPLOMA" | "DEGREE"
@@ -117,7 +116,7 @@ export const allSubs: CourseItem[] = [
     ...dsSubjects,
 ]
 
-// Subject Status Types
+
 export type SubjectState = "COMPLETED" | "ONGOING" | "FUTURE"
 
 export interface GradeRow {
@@ -209,7 +208,7 @@ export function needAvgForTarget(
     }
 }
 
-// ─── Term Types ────────────────────────────────────────
+// terms
 
 export type TermTag = "JAN" | "MAY" | "SEP"
 

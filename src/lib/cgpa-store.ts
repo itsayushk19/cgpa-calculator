@@ -1,5 +1,3 @@
-// Simple shared store for Three.js ↔ React integration
-// Avoids React re-renders while letting Three.js render loop read values
 
 interface CgpaBits {
   current: number
