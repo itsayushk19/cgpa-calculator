@@ -1,42 +1,41 @@
-/*
-    IITM BS Academic Data ( DS + ES)
-*/
 
 // GRADE POINT MAPPING
 
-export const GRADE_POINTS: Record<string, number> = {
+export const gradePtsThing: Record<string, number> = {
     S: 10,
     A: 9,
     B: 8,
     C: 7,
     D: 6,
-    E: 5,
-    U: 0.
+    E: 4,
+    U: 0,
+    WQ: 0,
+    WA: 0,
 }
 
-export const NON_CGPA_GRADES = ["I", "I_OP", "I_BOTH"]
-export const FAIL_GRADE = ["U", "WA", "WQ"]
+export const noCgpaOnes = ["I", "I_OP", "I_BOTH"]
+export const failishList = ["U", "WA", "WQ"]
 
 // Types
 
-export type DegreeDomain = "BS_DS" | "BS_ES"
-export type CourseLevel = "FOUNDATION" | "DIPLOMA" | "DEGREE"
-export type CourseType = "THEORY" | "LAB" | "PROJECT"
+export type DegreeBucket = "BS_DS" | "BS_ES"
+export type CourseLvl = "FOUNDATION" | "DIPLOMA" | "DEGREE"
+export type CourseKind = "THEORY" | "LAB" | "PROJECT"
 
-export interface Subject {
+export interface CourseItem {
     id: string
     code?: string
     name: string
-    domain: DegreeDomain
-    level: CourseLevel
+    domain: DegreeBucket
+    level: CourseLvl
     credits: number
-    type: CourseType
+    type: CourseKind
     hasOPPE?: boolean
 }
 
 // BS DATA SCIENCE SUBJECTS
 
-export const DS_SUBJECTS: Subject[] = [
+export const dsSubjects: CourseItem[] = [
     // FOUNDATION
     { id: "BSMA1001", name: "Mathematics for Data Science 1", domain: "BS_DS", level: "FOUNDATION", credits: 4, type: "THEORY" },
     { id: "BSHS1001", name: "English 1", domain: "BS_DS", level: "FOUNDATION", credits: 4, type: "THEORY" },
@@ -114,6 +113,127 @@ export const DS_SUBJECTS: Subject[] = [
 ]
 
 
-export const ALL_SUBJECTS: Subject[] = [
-    ...DS_SUBJECTS,
+export const allSubs: CourseItem[] = [
+    ...dsSubjects,
 ]
+
+// Subject Status Types
+export type SubjectState = "COMPLETED" | "ONGOING" | "FUTURE"
+
+export interface GradeRow {
+    subject: CourseItem
+    grade: string
+    status: SubjectState
+}
+
+// CGPA Calculation Functions
+export function calcCgpa(subjectGrades: GradeRow[]): number {
+    let totalCredits = 0
+    let totalPoints = 0
+
+    subjectGrades.forEach(({ subject, grade }) => {
+        if (noCgpaOnes.includes(grade)) {
+            return // Skip non-CGPA grades
+        }
+
+        const gradePoint = gradePtsThing[grade] || 0
+        totalCredits += subject.credits
+        totalPoints += gradePoint * subject.credits
+    })
+
+    return totalCredits > 0 ? totalPoints / totalCredits : 0
+}
+
+export function calcCgpaMix(
+    completed: GradeRow[],
+    ongoing: GradeRow[],
+    future: GradeRow[] = []
+): {
+    currentCGPA: number
+    predictedCGPA: number
+    totalCredits: number
+    predictedTotalCredits: number
+} {
+    const currentCGPA = calcCgpa(completed)
+    const allSubjects = [...completed, ...ongoing, ...future]
+    const predictedCGPA = calcCgpa(allSubjects)
+
+    const totalCredits = completed.reduce((acc, { subject }) => acc + subject.credits, 0)
+    const predictedTotalCredits = allSubjects.reduce((acc, { subject }) => acc + subject.credits, 0)
+
+    return {
+        currentCGPA,
+        predictedCGPA,
+        totalCredits,
+        predictedTotalCredits
+    }
+}
+
+export function cgpaLabelText(cgpa: number): string {
+    if (cgpa >= 9.5) return "Outstanding"
+    if (cgpa >= 9.0) return "S Grade"
+    if (cgpa >= 8.0) return "A Grade"
+    if (cgpa >= 7.0) return "B Grade"
+    if (cgpa >= 6.0) return "C Grade"
+    if (cgpa >= 5.0) return "D Grade"
+    return "E Grade"
+}
+
+export function isCgpaOk(cgpa: number): boolean {
+    return cgpa >= 5.0
+}
+
+export function needAvgForTarget(
+    completed: GradeRow[],
+    ongoing: GradeRow[],
+    targetCGPA: number
+): { required: number; achievable: boolean } {
+    const currentPoints = completed.reduce((acc, { subject, grade }) => {
+        const gradePoint = gradePtsThing[grade] || 0
+        return acc + gradePoint * subject.credits
+    }, 0)
+
+    const currentCredits = completed.reduce((acc, { subject }) => acc + subject.credits, 0)
+    const ongoingCredits = ongoing.reduce((acc, { subject }) => acc + subject.credits, 0)
+    const totalCredits = currentCredits + ongoingCredits
+
+    const requiredPoints = targetCGPA * totalCredits
+    const neededPoints = requiredPoints - currentPoints
+
+    const requiredGrade = ongoingCredits > 0 ? neededPoints / ongoingCredits : 0
+    const achievable = requiredGrade <= 10
+
+    return {
+        required: Math.max(0, requiredGrade),
+        achievable
+    }
+}
+
+// ─── Term Types ────────────────────────────────────────
+
+export type TermTag = "JAN" | "MAY" | "SEP"
+
+export interface TermBits {
+    year: number
+    term: TermTag
+}
+
+export const termLabels: Record<TermTag, string> = {
+    JAN: "January",
+    MAY: "May",
+    SEP: "September"
+}
+
+export function termToText(t: TermBits): string {
+    return `${termLabels[t.term]} ${t.year}`
+}
+
+export function termKeyish(t: TermBits): string {
+    return `${t.term}-${t.year}`
+}
+
+export function termSort(a: TermBits, b: TermBits): number {
+    if (a.year !== b.year) return a.year - b.year
+    const order: Record<TermTag, number> = { JAN: 0, MAY: 1, SEP: 2 }
+    return order[a.term] - order[b.term]
+}
