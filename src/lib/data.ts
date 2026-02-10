@@ -115,5 +115,5 @@ export const DS_SUBJECTS: Subject[] = [
 
 
 export const ALL_SUBJECTS: Subject[] = [
-  ...DS_SUBJECTS,
+    ...DS_SUBJECTS,
 ]
